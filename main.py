@@ -1,7 +1,9 @@
 import sys
+from datetime import datetime
 import requests
 from prompts import SYSTEM_PROMPT
-from helper import ask_llm, reset_chat, show_chat_history, show_help, return_available_models
+from helper import ask_llm, reset_chat, show_chat_history, show_help, return_available_models, \
+    save_chat
 
 
 def main() -> None:
@@ -72,6 +74,8 @@ def main() -> None:
             elif prompt == "/help":
                 print(show_help())
 
+            elif prompt == "/save":
+                save_chat(SYSTEM_PROMPT, model, conversation)
             else:
                 print("Unknown command\n")
 

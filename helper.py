@@ -1,3 +1,6 @@
+import pathlib
+import json
+from datetime import datetime
 import requests
 from config import OLLAMA_URL, MODEL
 from prompts import SYSTEM_PROMPT
@@ -71,8 +74,29 @@ def show_help() -> str:
     return """
     Available commands:
 
-        /help       Show this help message
-        /reset      Start a fresh conversation
-        /history    Show full chat history
-        /exit       Exit chat
+        /help     Show this help message
+        /reset    Start a fresh conversation
+        /history  Show full chat history
+        /save     Save chat to JSON
+        /exit     Exit chat
     """
+
+
+def save_chat(system_prompt: str, model: str, messages: list[dict]) -> None:
+
+    datetime_now = datetime.now().strftime("%Y_%m_%d")
+    path = f"conversations/chat_{datetime_now}.json"
+
+    file_path = pathlib.Path(path)
+    file_path.parent.mkdir(parents=True, exist_ok=True)
+
+    file_path.write_text(
+        json.dumps(
+            {
+                "system": system_prompt,
+                "model": model,
+                "messages": messages
+            },
+            indent=2
+        )
+    )
