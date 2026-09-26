@@ -3,6 +3,18 @@ from config import OLLAMA_URL, MODEL
 from prompts import SYSTEM_PROMPT
 
 
+def return_available_models() -> list[str]:
+    response = requests.get(
+        f"{OLLAMA_URL}/api/tags",
+        timeout=10
+    )
+    response.raise_for_status()
+
+    data = response.json()
+
+    return [model["name"] for model in data["models"]]
+
+
 def check_ollama() -> bool:
     """
     Check whether Ollama is available.
@@ -18,9 +30,9 @@ def check_ollama() -> bool:
         return False
 
 
-def ask_llm(messages: list[dict]) -> str:
+def ask_llm(messages: list[dict[str, str]], model: str = MODEL) -> str:
     payload = {
-        "model": MODEL,
+        "model": model,
         "messages": messages,
         "stream": False
     }
