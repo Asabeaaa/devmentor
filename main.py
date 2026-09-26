@@ -1,89 +1,72 @@
-import requests
-from config import OLLAMA_URL, MODEL
+import sys
 from prompts import SYSTEM_PROMPT
-
-conversation = [
-    {
-        "role": "system",
-        "content": SYSTEM_PROMPT
-    }
-]
+from helper import check_ollama, ask_llm, reset_chat, show_chat_history
 
 
-def check_ollama() -> bool:
-    """
-    Check whether Ollama is available.
-    """
-    try:
-        response = requests.get(
-            f"{OLLAMA_URL}/api/tags",
-            timeout=10
-        )
-        response.raise_for_status()
-        return True
-    except requests.exceptions.RequestException:
-        return False
+BANNER = """
+Commands:
+  /reset        start a fresh conversation
+  /history      show full history
+  /exit         exit chat
+"""
 
 
-def ask_llm(messages: list[dict]) -> str:
-    payload = {
-        "model": MODEL,
-        "messages": messages,
-        "stream": False
-    }
+def main() -> None:
+    conversation = [
+        {
+            "role": "system",
+            "content": SYSTEM_PROMPT
+        }
+    ]
+    print("======================================== DevMentor AI Assistant ========================================")
+    print(BANNER)
 
-    # Send the request to Ollama.
-    response = requests.post(
-        f"{OLLAMA_URL}/api/chat",
-        json=payload,
-        timeout=120
-    )
+    # run app
+    if not check_ollama():
+        print("\nOllama is not running.")
+    else:
 
-    # Raise an error if Ollama returns an unsuccessful response.
-    response.raise_for_status()
+        print("\nOllama is running.")
 
-    # Convert Ollama's JSON response into a Python dictionary.
-    data = response.json()
+        while True:
+            prompt = input("You: ")
 
-    # Return only the generated text.
-    return data["message"]["content"]
+            if prompt.startswith("/"):
+
+                # reset
+                if prompt == "/reset":
+                    conversation = reset_chat()
+                    print("Conversation reset\n")
+                elif prompt == "/exit":
+                    print("Bye.")
+                    return
+                elif prompt == "/history":
+                    print(show_chat_history(conversation) + "\n")
+                else:
+                    print("Unknown command\n")
+                continue
+
+            else:
+                # Add the user's message to the conversation.
+                conversation.append(
+                    {
+                        "role": "user",
+                        "content": prompt
+                    }
+                )
+                assistant_response = ask_llm(conversation)
+                # Add the assistant's response to the conversation.
+                conversation.append(
+                    {
+                        "role": "assistant",
+                        "content": assistant_response
+                    }
+                )
+
+                print("\nDevMentor:")
+                print(assistant_response)
+                print()
 
 
-print("======================================== DevMentor AI Assistant ========================================")
-
-
-# run app
-if not check_ollama():
-    print("\nOllama is not running.")
-else:
-
-    print("\nOllama is running.")
-
-    print("Type 'exit' to stop.\n")
-
-    while True:
-        prompt = input("You: ")
-
-        if prompt.lower() == "exit":
-            break
-
-        # Add the user's message to the conversation.
-        conversation.append(
-            {
-                "role": "user",
-                "content": prompt
-            }
-        )
-
-        assistant_response = ask_llm(conversation)
-        # Add the assistant's response to the conversation.
-        conversation.append(
-            {
-                "role": "assistant",
-                "content": assistant_response
-            }
-        )
-
-        print("\nDevMentor:")
-        print(assistant_response)
-        print()
+if __name__ == "__main__":
+    sys.exit(main())
