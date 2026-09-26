@@ -1,0 +1,54 @@
+import requests
+from config import OLLAMA_URL, MODEL
+from prompts import SYSTEM_PROMPT
+
+
+def check_ollama() -> bool:
+    """
+    Check whether Ollama is available.
+    """
+    try:
+        response = requests.get(
+            f"{OLLAMA_URL}/api/tags",
+            timeout=10
+        )
+        response.raise_for_status()
+        return True
+    except requests.exceptions.RequestException:
+        return False
+
+
+def ask_llm(messages: list[dict]) -> str:
+    payload = {
+        "model": MODEL,
+        "messages": messages,
+        "stream": False
+    }
+
+    # Send the request to Ollama.
+    response = requests.post(
+        f"{OLLAMA_URL}/api/chat",
+        json=payload,
+        timeout=120
+    )
+
+    # Raise an error if Ollama returns an unsuccessful response.
+    response.raise_for_status()
+
+    # Convert Ollama's JSON response into a Python dictionary.
+    data = response.json()
+
+    # Return only the generated text.
+    return data["message"]["content"]
+
+
+def reset_chat() -> list[dict]:
+    messages = [{"role": "system", "content": SYSTEM_PROMPT}]
+    return messages
+
+
+def show_chat_history(messages) -> str:
+    lines = []
+    for m in messages:
+        lines.append(f"[{m['role']}] {m['content']}")
+    return "\n".join(lines)
