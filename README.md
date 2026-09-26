@@ -45,5 +45,47 @@ The rules that had the clearest effect were:
 When instructions were vague, the model had more freedom to decide the length, structure, programming language, and level of technical detail. For example, the Minimal prompt produced lengthy responses despite being minimal, and it chose Java for the Dependency Injection example. This shows that vague instructions may still produce a technically relevant answer, but the output may not match the intended audience or teaching style.
 
 ## Memory Experiment
+This is a memory experiment to test whether DevMentor can remember information from earlier messages and use it correctly in later messages and the impact of resetting the chat on the memory.
+
+**Before resetting memory**
+User: My favorite programming language is Python.:
+Python is a popular and versatile language, widely used in various domains such as web development, data analysis, artificial intelligence, and more. What specifically about Python do you enjoy about it? Is it the simplicity of its syntax, the large number of libraries available, or something else?
+
+User: Explain interfaces.:
+In programming, an interface is a contract that defines a set of methods that a class or object must implement. It's like a blueprint or a specification for a class, outlining what methods it must have, but not how they're implemented.
+
+Think of an interface as a promise: "I'll give you a class that does X, Y, and Z, no matter how I implement them." An interface provides a way for different classes to work together without worrying about the implementation details.
+
+In Python, you can define an interface using a class with a `_interface` suffix and methods that are not implemented (i.e., they raise a `NotImplementedError` exception). For example:
+```python
+class Printable:
+    def __init__(self, name):
+        self.name = name
+
+    def print(self):
+        raise NotImplementedError("Must be implemented by subclass")
+
+class Document(Printable):
+    def print(self):
+        print(f"Printing {self.name}")
+```
+In this example, the `Printable` interface defines a `print` method that must be implemented by any subclass. The `Document` class implements this method, while any other class would need to do the same to be considered `Printable`.
+
+Does that make sense?
+
+User: What is my favorite programming language?:
+You mentioned earlier that your favorite programming language is Python.
+
+**After resetting memory**
+User: What is my favorite programming language?:
+I'm happy to help you with your question, but I'm a bit unsure... This conversation just started, and we haven't discussed any programming languages yet. Could you please tell me, what programming languages have you tried, and which ones you're interested in learning more about?
+
+**Does the LLM actually “remember” the conversation?**:
+Yes. The LLM was able to use the information about my favorite programming language from an earlier message in the conversation to answer the follow-up question correctly.
+
+This is done by the application maintaining the conversation as application state using the conversation variable. This variable stores the message history, including previous user and assistant messages. On each request, the application sends this message history as part of the context to the LLM. This allows the LLM to access earlier information, such as my favorite programming language being Python, and use it when answering later questions.
+
+
+
 ## Challenges Encountered
 ## Lessons Learned
