@@ -47,8 +47,20 @@ def reset_chat() -> list[dict]:
     return messages
 
 
-def show_chat_history(messages) -> str:
+def show_chat_history(messages: list[dict]) -> str:
     lines = []
     for m in messages:
         lines.append(f"[{m['role']}] {m['content']}")
     return "\n".join(lines)
+
+
+def show_help() -> str:
+
+    return """
+    Available commands:
+
+        /help       Show this help message
+        /reset      Start a fresh conversation
+        /history    Show full chat history
+        /exit       Exit chat
+    """
