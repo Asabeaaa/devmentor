@@ -3,7 +3,6 @@ import json
 from datetime import datetime
 import requests
 from config import OLLAMA_URL, MODEL
-from prompts import SYSTEM_PROMPT
 
 
 def return_available_models() -> list[str]:
@@ -18,19 +17,19 @@ def return_available_models() -> list[str]:
     return [model["name"] for model in data["models"]]
 
 
-def check_ollama() -> bool:
-    """
-    Check whether Ollama is available.
-    """
-    try:
-        response = requests.get(
-            f"{OLLAMA_URL}/api/tags",
-            timeout=10
-        )
-        response.raise_for_status()
-        return True
-    except requests.exceptions.RequestException:
-        return False
+# def check_ollama() -> bool:
+#     """
+#     Check whether Ollama is available.
+#     """
+#     try:
+#         response = requests.get(
+#             f"{OLLAMA_URL}/api/tags",
+#             timeout=10
+#         )
+#         response.raise_for_status()
+#         return True
+#     except requests.exceptions.RequestException:
+#         return False
 
 
 def ask_llm(messages: list[dict[str, str]], model: str = MODEL) -> str:
@@ -57,8 +56,8 @@ def ask_llm(messages: list[dict[str, str]], model: str = MODEL) -> str:
     return data["message"]["content"]
 
 
-def reset_chat() -> list[dict]:
-    messages = [{"role": "system", "content": SYSTEM_PROMPT}]
+def reset_chat(system_prompt: str) -> list[dict]:
+    messages = [{"role": "system", "content": system_prompt}]
     return messages
 
 
@@ -74,17 +73,18 @@ def show_help() -> str:
     return """
     Available commands:
 
-        /help     Show this help message
+        /help     Show available commands
         /reset    Start a fresh conversation
         /history  Show full chat history
         /save     Save chat to JSON
+        /load     Load chat from JSON
         /exit     Exit chat
     """
 
 
 def save_chat(system_prompt: str, model: str, messages: list[dict]) -> None:
 
-    datetime_now = datetime.now().strftime("%Y_%m_%d")
+    datetime_now = datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
     path = f"conversations/chat_{datetime_now}.json"
 
     file_path = pathlib.Path(path)
@@ -100,3 +100,9 @@ def save_chat(system_prompt: str, model: str, messages: list[dict]) -> None:
             indent=2
         )
     )
+    print(f"Saved to: {file_path}\n")
+
+
+def load_chat(path: str) -> list[dict]:
+    data = json.loads(pathlib.Path(path).read_text())
+    return data["messages"]
