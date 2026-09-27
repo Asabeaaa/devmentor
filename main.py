@@ -1,18 +1,18 @@
 import sys
-from datetime import datetime
+import json
 import requests
-from prompts import SYSTEM_PROMPT
+from prompts import SYSTEM_PROMPT, MODES
 from helper import ask_llm, reset_chat, show_chat_history, show_help, return_available_models, \
-    save_chat
+    save_chat, load_chat
 
 
 def main() -> None:
-    conversation = [
-        {
-            "role": "system",
-            "content": SYSTEM_PROMPT
-        }
-    ]
+    # conversation = [
+    #     {
+    #         "role": "system",
+    #         "content": SYSTEM_PROMPT
+    #     }
+    # ]
 
     print("======================================== DevMentor AI Assistant ========================================")
     print(show_help())
@@ -48,6 +48,36 @@ def main() -> None:
         )
         return
 
+    print("\nAvailable modes:")
+
+    mode_names = list(MODES.keys())
+
+    for i, mode_name in enumerate(mode_names, start=1):
+        print(f"{i}. {mode_name}")
+
+    while True:
+        try:
+            choice = int(input("\nSelect mode number: "))
+
+            if 1 <= choice <= len(mode_names):
+                mode_name = mode_names[choice - 1]
+                system_prompt = MODES[mode_name]
+
+                print(f"Using mode: {mode_name}\n")
+                break
+
+            print("Invalid mode number. Please try again.")
+
+        except ValueError:
+            print("Please enter a number.")
+
+    conversation = [
+        {
+            "role": "system",
+            "content": system_prompt
+        }
+    ]
+
     while True:
         try:
             prompt = input("You: ").strip()
@@ -61,7 +91,7 @@ def main() -> None:
 
         if prompt.startswith("/"):
             if prompt == "/reset":
-                conversation = reset_chat()
+                conversation = reset_chat(system_prompt)
                 print("Conversation reset\n")
 
             elif prompt == "/exit":
@@ -75,7 +105,17 @@ def main() -> None:
                 print(show_help())
 
             elif prompt == "/save":
-                save_chat(SYSTEM_PROMPT, model, conversation)
+                save_chat(system_prompt, model, conversation)
+
+            elif prompt == "/load":
+                path = input("Enter the chat path: ").strip()
+
+                try:
+                    conversation = load_chat(path)
+                    print("Conversation loaded\n")
+                except (FileNotFoundError, json.JSONDecodeError, KeyError):
+                    print(
+                        "Could not load the conversation. Check the file path and format.\n")
             else:
                 print("Unknown command\n")
 
