@@ -113,7 +113,14 @@ git clone https://github.com/Asabeaaa/devmentor.git
 cd devmentor
 ```
 
-### 4. Install Python Dependencies
+### 4. Create and activate virtual environment
+
+```bash
+python3 -m venv venv
+. venv/bin/activate
+```
+
+### 5. Install Python Dependencies
 
 ```bash
 pip install -r requirements.txt
@@ -221,7 +228,7 @@ This means DevMentor's memory is **application-managed** so the model does not u
 | B | Detailed: Role, audience, format, explanation style | You are DevMentor, a programming assistant and tutor for junior developers. You are talking to junior developers who are learning programming and software development. Structure responses clearly using short explanations, examples, and code where appropriate. Explain technical concepts simply and step by step, avoiding unnecessary complexity. |
 | C | Constrained: Explain before code, keep intros short, default to Python, avoid unexplained jargon | You are DevMentor, a programming assistant and tutor for junior developers. You are talking to junior developers who are learning programming and software development. Structure responses clearly using short explanations, examples, and code where appropriate. Explain technical concepts simply and step by step, avoiding unnecessary complexity. Explain concepts before showing code, keep introductions short, default language to Python if not mentioned, and avoid unexplained jargon. Keep responses concise and focused on the user's question, especially for follow-up questions. When unsure, state that you are unsure and avoid guessing or presenting unverified information as fact. |
 
-Using the prompts: 
+**Using the prompts:**
 - Explain REST APIs.
 - Explain recursion.
 - What is dependency injection?
@@ -258,6 +265,7 @@ When instructions were vague, the model had more freedom to decide the length, s
 This is a memory experiment to test whether DevMentor can remember information from earlier messages and use it correctly in later messages and the impact of resetting the chat on the memory.
 
 **Before resetting memory**
+
 User: My favorite programming language is Python.:
 
 Python is a popular and versatile language, widely used in various domains such as web development, data analysis, artificial intelligence, and more. What specifically about Python do you enjoy about it? Is it the simplicity of its syntax, the large number of libraries available, or something else?
@@ -290,6 +298,7 @@ User: What is my favorite programming language?:
 You mentioned earlier that your favorite programming language is Python.
 
 **After resetting memory**
+
 User: What is my favorite programming language?:
 
 I'm happy to help you with your question, but I'm a bit unsure... This conversation just started, and we haven't discussed any programming languages yet. Could you please tell me, what programming languages have you tried, and which ones you're interested in learning more about?
@@ -306,7 +315,10 @@ This is done by the application maintaining the conversation as application stat
 ### 1. Designing Effective System Prompts
 
 I realized every time I asked a question, DevMentor gave the initial elaborate explanations with examples and code examples, but when I asked follow-up questions, it still did the same, even if it was a simple response question.
+
 So now all modes have a baseline prompt to keep responses concise and focused on the user's question, especially for follow-up questions. It is also to prevent unnecessary repetition of previous explanations unless the user explicitly asks for more detail.
 
 
 ## Lessons Learned
+
+
