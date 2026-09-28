@@ -171,6 +171,49 @@ The selected mode determines which system prompt is used for the conversation. T
 
 ## How Conversation Memory Works
 
+### What is Conversation Memory?
+
+Conversation memory is the ability of an AI assistant to use previous messages from the current conversation when responding to a new message. This allows the assistant to maintain context across multiple turns instead of treating each message as a completely separate request.
+
+For example, if a user asks:
+
+```text
+You: What is a Python list?
+
+DevMentor: A Python list is a collection that can store multiple values...
+
+You: How do I add an item to it?
+```
+
+The second question depends on the previous conversation. By providing the earlier messages as context, the model can understand that "it" refers to a Python list and answer with that context in mind.
+
+### How DevMentor Implements Conversation Memory
+
+Most LLM APIs are stateless, meaning they do not automatically remember previous requests after generating a response. Each request is treated independently unless the application sends previous messages back as context.
+
+DevMentor therefore manages conversation memory in the Python application by storing the conversation history in a list and sending the full history with each request. The conversation includes the system prompt, user messages, and assistant responses.
+
+When the user sends a new message, the application adds it to the conversation history and sends the full conversation to the Ollama API. This gives the local model the previous messages as context when generating its response.
+
+The flow is:
+
+```text
+User message
+     ↓
+Add message to conversation history
+     ↓
+Send full conversation to Ollama
+     ↓
+Local LLM generates response
+     ↓
+Add response to conversation history
+     ↓
+Display response to user
+```
+
+This means DevMentor's memory is **application-managed** so the model does not update or retrain itself from the conversation.
+
+
 ## Prompt Engineering Experiment
 | | Style | Prompt |
 | --- | --- | --- |
@@ -209,6 +252,7 @@ The rules that had the clearest effect were:
 5. What happened when a rule was vague?:
 
 When instructions were vague, the model had more freedom to decide the length, structure, programming language, and level of technical detail. For example, the Minimal prompt produced lengthy responses despite being minimal, and it chose Java for the Dependency Injection example. This shows that vague instructions may still produce a technically relevant answer, but the output may not match the intended audience or teaching style.
+
 
 ## Memory Experiment
 This is a memory experiment to test whether DevMentor can remember information from earlier messages and use it correctly in later messages and the impact of resetting the chat on the memory.
@@ -255,7 +299,6 @@ I'm happy to help you with your question, but I'm a bit unsure... This conversat
 Yes. The LLM was able to use the information about my favorite programming language from an earlier message in the conversation to answer the follow-up question correctly.
 
 This is done by the application maintaining the conversation as application state using the conversation variable. This variable stores the message history, including previous user and assistant messages. On each request, the application sends this message history as part of the context to the LLM. This allows the LLM to access earlier information, such as my favorite programming language being Python, and use it when answering later questions.
-
 
 
 ## Challenges Encountered
