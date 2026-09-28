@@ -303,4 +303,10 @@ This is done by the application maintaining the conversation as application stat
 
 ## Challenges Encountered
 
+### 1. Designing Effective System Prompts
+
+I realized every time I asked a question, DevMentor gave the initial elaborate explanations with examples and code examples, but when I asked follow-up questions, it still did the same, even if it was a simple response question.
+So now all modes have a baseline prompt to keep responses concise and focused on the user's question, especially for follow-up questions. It is also to prevent unnecessary repetition of previous explanations unless the user explicitly asks for more detail.
+
+
 ## Lessons Learned
