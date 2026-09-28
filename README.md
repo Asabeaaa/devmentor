@@ -1,12 +1,156 @@
 # DevMentor
 
 ## Description
-This is a local programming assistant for junior developers called Dev Mentor run using the command line.
+DevMentor is a local AI programming assistant and tutor built with Python and Ollama run from the command line. It allows users to select an available local language model and choose a mode that controls how the assistant responds. 
+It is designed to help developers learn programming concepts, solve problems, understand code, and improve their programming skills using locally hosted language models.
+
 
 ## Features
+* **Local Language Model Support:** Run locally hosted language models through Ollama.
+* **Language Model Selection:** View available Ollama models and select a model when the application starts.
+* **Interaction Modes:** Choose how DevMentor responds using Beginner Tutor, Senior Engineer, Code Reviewer, or Socratic Teacher modes. Each mode uses a different system prompt that guides the model's behaviour and response style.
+* **Conversation Memory:** Maintains the conversation history and sends it as context with each request.
+* **Reset Conversation:** Start a fresh conversation while keeping the selected mode (system prompt).
+* **View History:** Display the current conversation history.
+* **Save Conversations:** Save the current conversation to a JSON file.
+* **Load Conversations:** Load a previously saved conversation from a JSON file.
+* **Command Interface:** Use commands such as `/help`, `/reset`, `/history`, `/save`, `/load`, and `/exit`.
+
+
 ## Architecture
+
+```text
+                         ┌─────────────────────┐
+                         │        User         │
+                         └──────────┬──────────┘
+                                    │
+                                    │ User prompt
+                                    v
+                         ┌─────────────────────┐
+                         │ Python Application: │
+                         │                     │
+                         │ Conversation state  │
+                         │ lives here          │
+                         └──────────┬──────────┘
+                                    │
+                                    │ Full conversation history
+                                    │ + selected model
+                                    v
+                         ┌─────────────────────┐
+                         │     Ollama API:     │
+                         │                     │
+                         │ Sends requests to   │
+                         │ the selected model  │
+                         └──────────┬──────────┘
+                                    │
+                                    │ Prompt + conversation
+                                    v
+                         ┌─────────────────────┐
+                         │      Local LLM:     │
+                         │                     │
+                         │ Model runs locally  │
+                         │ through Ollama      │
+                         └──────────┬──────────┘
+                                    │
+                                    │ Generated response
+                                    v
+                         ┌─────────────────────┐
+                         │ Python Application: │
+                         │                     │
+                         │ Adds response to    │
+                         │ conversation state  │
+                         └──────────┬──────────┘
+                                    │
+                                    │ Response
+                                    v
+                         ┌─────────────────────┐
+                         │        User         │
+                         └─────────────────────┘
+```
+
+### Architecture Notes
+
+* **Model location:** The selected LLM runs locally on the user's computer through Ollama.
+* **Conversation state:** The Python application stores the conversation history in the conversation list.
+* **Ollama API:** The API receives the conversation and selected model, sends the request to the local LLM, and returns the generated response.
+* **Every request:** The application sends the full conversation history, including the system prompt, previous user messages, and previous assistant responses, along with the selected model.
+
+
 ## Installation
+
+### Prerequisites
+
+Before running DevMentor, make sure you have:
+
+* Python 3.10 or later installed.
+* Ollama installed on your computer.
+* At least one Ollama model downloaded.
+
+### 1. Install Ollama
+
+Download and install Ollama from the official website based on your operating system.
+
+After installation, make sure Ollama is running.
+
+### 2. Install an Ollama Model
+
+For example, to install Llama 3.2:
+
+```bash
+ollama pull llama3.2
+```
+
+You can check which models are installed with:
+
+```bash
+ollama list
+```
+
+### 3. Clone the Repository
+
+```bash
+git clone https://github.com/Asabeaaa/devmentor.git
+cd devmentor
+```
+
+### 4. Install Python Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+
 ## Running the Application
+
+From the project directory, run:
+
+```bash
+python3 main.py
+```
+
+When the application starts, DevMentor will:
+
+1. Check for available local Ollama models.
+2. Display the available models and prompt you to select one.
+3. Display the available interaction modes and prompt you to select one.
+4. Start the conversation using the selected model and mode.
+
+### Available Commands
+
+During the application run, you can use the `/help` command to view the available commands and actions.
+
+| Command    | Description                                    |
+| ---------- | ---------------------------------------------- |
+| `/help`    | Show available commands                        |
+| `/reset`   | Start a fresh conversation                     |
+| `/history` | Display the current conversation history       |
+| `/save`    | Save the current conversation to JSON          |
+| `/load`    | Load a previously saved conversation from JSON |
+| `/exit`    | Exit DevMentor                                 |
+
+The model and interaction mode are selected when the application starts and cannot currently be changed during an active session.
+
+
 ## System Prompt
 ## How Conversation Memory Works
 
@@ -98,4 +242,5 @@ This is done by the application maintaining the conversation as application stat
 
 
 ## Challenges Encountered
+
 ## Lessons Learned
