@@ -316,6 +316,11 @@ I realized every time I asked a question, DevMentor gave the initial elaborate e
 
 So now all modes have a baseline prompt to keep responses concise and focused on the user's question, especially for follow-up questions. It is also to prevent unnecessary repetition of previous explanations unless the user explicitly asks for more detail.
 
+### 2. Printing the system prompt when the chat history is requested for
+When I first implemented the /history command, the system prompt was also displayed as part of the chat history. I knew I did not want it to be shown, but I initially did not understand why it was appearing. Since the system prompt defines the assistant's role and behaviour rather than being part of the user's actual conversation, I did not want it included when displaying the chat history.
+
+I updated the show_chat_history() function to check the role of each message and skip messages where the role is system. This allows the command to display only the user's messages and the assistant's responses.
+
 
 ## Lessons Learned
 
