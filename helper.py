@@ -6,6 +6,9 @@ from config import OLLAMA_URL, MODEL
 
 
 def return_available_models() -> list[str]:
+    """
+    Return locally available Ollama models.
+    """
     response = requests.get(
         f"{OLLAMA_URL}/api/tags",
         timeout=10
@@ -33,6 +36,22 @@ def return_available_models() -> list[str]:
 
 
 def ask_llm(messages: list[dict[str, str]], model: str = MODEL) -> str:
+    """
+    Send a conversation to the local Ollama model.
+
+    Parameters
+    ----------
+    messages : list
+        A list containing the conversation history.
+    model : str
+        The name of the model selected.
+
+    Returns
+    -------
+    str
+        The assistant's response.
+    """
+
     payload = {
         "model": model,
         "messages": messages,
@@ -63,8 +82,9 @@ def reset_chat(system_prompt: str) -> list[dict]:
 
 def show_chat_history(messages: list[dict]) -> str:
     lines = []
-    for m in messages:
-        lines.append(f"[{m['role']}] {m['content']}")
+    for message in messages:
+        if message["role"] != "system":
+            lines.append(f"[{message['role']}] {message['content']}")
     return "\n".join(lines)
 
 
@@ -85,6 +105,7 @@ def show_help() -> str:
 def save_chat(system_prompt: str, model: str, messages: list[dict]) -> None:
 
     datetime_now = datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
+    # timestamp added to allow multiple chat saves from the same day
     path = f"conversations/chat_{datetime_now}.json"
 
     file_path = pathlib.Path(path)
