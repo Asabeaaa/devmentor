@@ -68,8 +68,6 @@ It is designed to help developers learn programming concepts, solve problems, un
                          └─────────────────────┘
 ```
 
-### Architecture Notes
-
 * **Model location:** The selected LLM runs locally on the user's computer through Ollama.
 * **Conversation state:** The Python application stores the conversation history in the conversation list.
 * **Ollama API:** The API receives the conversation and selected model, sends the request to the local LLM, and returns the generated response.
@@ -196,7 +194,7 @@ The second question depends on the previous conversation. By providing the earli
 
 ### How DevMentor Implements Conversation Memory
 
-Most LLM APIs are stateless, meaning they do not automatically remember previous requests after generating a response. Each request is treated independently unless the application sends previous messages back as context.
+Most LLM APIs are stateless, meaning they do not automatically remember previous requests after generating a response (they do not preserve an internal memory). Each request is treated independently unless the application sends previous messages back as context.
 
 DevMentor therefore manages conversation memory in the Python application by storing the conversation history in a list and sending the full history with each request. The conversation includes the system prompt, user messages, and assistant responses.
 
@@ -321,6 +319,9 @@ So now all modes have a baseline prompt to keep responses concise and focused on
 
 ## Lessons Learned
 
+### 1. Context Window
+I learnt about context windows and the Lost in the Middle phenomenon, and why it is important to manage context so the model's performance is not impacted and the available tokens are not exhausted.
+
 
 ## Challenge questions
 
@@ -344,11 +345,19 @@ The Python application maintains the conversation list and sends it to the LLM a
 
 5. What happens when the conversation becomes extremely long? Research the term **context window**. 
 
+The conversation uses part of the model's context window, which is the maximum amount of information the model can process in a request, measured in tokens. As more messages are added, the conversation consumes more tokens. Eventually, the context limit can be reached, meaning the application cannot continue sending the entire conversation.
+
+Long contexts can also affect how well the model understands the history it receives. This is related to the Lost in the Middle effect, where an LLM may attend to information at the beginning and end of a long context more effectively than information located in the middle. As a conversation becomes very long, important details from earlier messages may therefore receive less attention, even though they are still included in the context window. This is one reason why very long conversations can become less reliable over time.
+
+**Two strategies for managing long chats are:**
+
+* **Limit Active Conversation History:** Instead of sending the entire conversation with every request, the application can keep only the most recent messages within a defined limit. This reduces token usage and keeps the model's active context focused on recent messages. However, older messages may contain information that is still relevant, so removing them from the active context can cause the model to lose important information and potentially generate incorrect or hallucinated responses.
+
+* **Externalize Conversation Context:** As users of AI assistants, before a chat becomes too long, create a summary or handoff file containing key decisions, architecture, finalized code, and outstanding tasks. Start a new chat and provide the handoff file as context, allowing the project to continue without relying on one long conversation history.
 
 6. Why is `You are helpful.` a weak system prompt? How would you improve it?
 
 `You are helpful.` is too vague as a system prompt. It does not tell the model who it is, who it is helping, how it should respond, or what behaviour is expected. I would improve it by clearly stating its role, who its audience is, how it should explain or present outputs, and the behaviour expected from it.
-
 
 7. After the LLM replies, what should happen to `messages` before the next user turn, and why?
 
@@ -365,8 +374,7 @@ to become:
 messages = [
     {"role": "system", "content": system_prompt},
     {"role": "user", "content": question},
-    {"role": "assistant", "content": assistant_response
-}
+    {"role": "assistant", "content": assistant_response}
 ]
 ```
 
