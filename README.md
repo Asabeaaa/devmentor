@@ -152,6 +152,23 @@ The model and interaction mode are selected when the application starts and cann
 
 
 ## System Prompt
+
+DevMentor uses system prompts to define the assistant's role, behaviour, and response style. The system prompt is sent to the Ollama model as part of the conversation and guides how the model should respond to the user.
+
+The project includes four interaction modes, each using a different system prompt:
+
+| Mode                 | Purpose                                                                                                                      |
+| -------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| **Beginner Tutor**   | Explains programming concepts simply and step by step for beginners.                                                         |
+| **Senior Engineer**  | Provides technically precise guidance and considers factors such as maintainability, performance, security, and scalability. |
+| **Code Reviewer**    | Reviews code for correctness, readability, maintainability, performance, security, and potential bugs.                       |
+| **Socratic Teacher** | Guides the learner using questions and hints instead of immediately providing the complete solution.                         |
+
+All modes include a common baseline to keep responses concise, focused on the user's question, and avoid guessing when the model is unsure.
+
+The selected mode determines which system prompt is used for the conversation. The prompt remains active throughout the session unless the application is restarted with a different mode.
+
+
 ## How Conversation Memory Works
 
 ## Prompt Engineering Experiment
