@@ -7,6 +7,13 @@ from helper import ask_llm, reset_chat, show_chat_history, show_help, return_ava
 
 
 def main() -> None:
+    """
+    Run the DevMentor command-line application.
+
+    Checks for available Ollama models, allows the user to
+    select a model and interaction mode, and manages the
+    conversation until the user exits.
+    """
     # conversation = [
     #     {
     #         "role": "system",

@@ -7,7 +7,12 @@ from config import OLLAMA_URL, MODEL
 
 def return_available_models() -> list[str]:
     """
-    Return locally available Ollama models.
+    Return the Ollama models available locally.
+
+    Returns
+    -------
+    list[str]
+        A list of available Ollama model names.
     """
     response = requests.get(
         f"{OLLAMA_URL}/api/tags",
@@ -23,6 +28,11 @@ def return_available_models() -> list[str]:
 # def check_ollama() -> bool:
 #     """
 #     Check whether Ollama is available.
+#
+#     Returns
+#     -------
+#     bool
+#         True if Ollama is available, otherwise False.
 #     """
 #     try:
 #         response = requests.get(
@@ -37,21 +47,20 @@ def return_available_models() -> list[str]:
 
 def ask_llm(messages: list[dict[str, str]], model: str = MODEL) -> str:
     """
-    Send a conversation to the local Ollama model.
+    Send a conversation to the selected local Ollama model.
 
     Parameters
     ----------
-    messages : list
+    messages : list[dict[str, str]]
         A list containing the conversation history.
     model : str
-        The name of the model selected.
+        The name of the selected Ollama model.
 
     Returns
     -------
     str
-        The assistant's response.
+        The assistant's generated response.
     """
-
     payload = {
         "model": model,
         "messages": messages,
@@ -76,20 +85,57 @@ def ask_llm(messages: list[dict[str, str]], model: str = MODEL) -> str:
 
 
 def reset_chat(system_prompt: str) -> list[dict]:
+    """
+    Start a new conversation using the selected system prompt.
+
+    Parameters
+    ----------
+    system_prompt : str
+        The system prompt that defines the assistant's behaviour.
+
+    Returns
+    -------
+    list[dict]
+        A new conversation containing the system prompt.
+    """
     messages = [{"role": "system", "content": system_prompt}]
     return messages
 
 
 def show_chat_history(messages: list[dict]) -> str:
+    """
+    Display the conversation history.
+
+    The system prompt is excluded from the returned history.
+
+    Parameters
+    ----------
+    messages : list[dict]
+        A list containing the conversation history.
+
+    Returns
+    -------
+    str
+        The formatted conversation history.
+    """
     lines = []
+
     for message in messages:
         if message["role"] != "system":
             lines.append(f"[{message['role']}] {message['content']}")
+
     return "\n".join(lines)
 
 
 def show_help() -> str:
+    """
+    Return the list of available DevMentor commands.
 
+    Returns
+    -------
+    str
+        A formatted list of available commands.
+    """
     return """
     Available commands:
 
@@ -103,9 +149,21 @@ def show_help() -> str:
 
 
 def save_chat(system_prompt: str, model: str, messages: list[dict]) -> None:
+    """
+    Save the current conversation to a JSON file.
 
+    Parameters
+    ----------
+    system_prompt : str
+        The system prompt used for the conversation.
+    model : str
+        The Ollama model used for the conversation.
+    messages : list[dict]
+        The conversation history to save.
+    """
     datetime_now = datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
-    # timestamp added to allow multiple chat saves from the same day
+
+    # Timestamp added to allow multiple chat saves from the same day.
     path = f"conversations/chat_{datetime_now}.json"
 
     file_path = pathlib.Path(path)
@@ -121,9 +179,23 @@ def save_chat(system_prompt: str, model: str, messages: list[dict]) -> None:
             indent=2
         )
     )
+
     print(f"Saved to: {file_path}\n")
 
 
 def load_chat(path: str) -> list[dict]:
+    """
+    Load a saved conversation from a JSON file.
+
+    Parameters
+    ----------
+    path : str
+        The path to the saved conversation file.
+
+    Returns
+    -------
+    list[dict]
+        The conversation history loaded from the file.
+    """
     data = json.loads(pathlib.Path(path).read_text())
     return data["messages"]
