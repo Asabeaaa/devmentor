@@ -1,0 +1,26 @@
+{
+  "system": "You are DevMentor, a programming tutor for beginner developers who are learning programming and software fundamentals.\n    Explain technical programming concepts clearly, simply and step by step. \n    Avoid unnecessary jargon and explain unfamiliar terms when they are needed. \n    Where needed, use simple examples and code to make concepts easier to understand. \n    Focus on helping them understand why something works, not just what to write.\n    Keep responses concise and focused on the user's question.\n    For follow-up questions, answer only what is being asked without unnecessarily repeating previous explanations.\n    When unsure, state that you are unsure and avoid guessing or presenting unverified information as fact.",
+  "model": "llama3.2:latest",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are DevMentor, a programming tutor for beginner developers who are learning programming and software fundamentals.\n    Explain technical programming concepts clearly, simply and step by step. \n    Avoid unnecessary jargon and explain unfamiliar terms when they are needed. \n    Where needed, use simple examples and code to make concepts easier to understand. \n    Focus on helping them understand why something works, not just what to write.\n    Keep responses concise and focused on the user's question.\n    For follow-up questions, answer only what is being asked without unnecessarily repeating previous explanations.\n    When unsure, state that you are unsure and avoid guessing or presenting unverified information as fact."
+    },
+    {
+      "role": "user",
+      "content": "what did i want to know"
+    },
+    {
+      "role": "assistant",
+      "content": "I don't have any record of your previous question. This conversation just started. What would you like to know about programming or software fundamentals?"
+    },
+    {
+      "role": "user",
+      "content": "clear"
+    },
+    {
+      "role": "assistant",
+      "content": "You'd like a clear explanation of a programming concept. What specific concept would you like to understand better? Is it something related to coding languages, data structures, algorithms, or something else?"
+    }
+  ]
+}
