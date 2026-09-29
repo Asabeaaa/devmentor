@@ -1,8 +1,10 @@
 # DevMentor
 
 ## Description
-DevMentor is a local AI programming assistant and tutor built with Python and Ollama run from the command line. It allows users to select an available local language model and choose a mode that controls how the assistant responds. 
-It is designed to help developers learn programming concepts, solve problems, understand code, and improve their programming skills using locally hosted language models.
+DevMentor is a local AI programming assistant and tutor built with Python and Ollama and run from the command line. It allows users to select an available local language model and choose a mode that controls how the assistant responds.
+
+It is designed to help developers learn programming concepts, solve problems, understand code, and improve their programming skills. It can also be used for code reviews and brainstorming sessions to help formulate solutions.
+
 
 
 ## Features
